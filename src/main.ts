@@ -8,7 +8,7 @@ import * as dotenv from 'dotenv';
 async function bootstrap() {
   dotenv.config();
   const app = await NestFactory.create(AppModule);
-
+  app.setGlobalPrefix('payment');
   app.useGlobalPipes(new ValidationPipe());
 
   app.useGlobalInterceptors(new TransformInterceptor());
@@ -20,10 +20,14 @@ async function bootstrap() {
     .addTag('payments')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('payment/api', app, document);
 
-  await app.listen(3069);
-  console.log(`Application is running on: ${await app.getUrl()}`);
-  console.log(`Swagger is available at: ${await app.getUrl()}/api`);
+  app.enableCors({
+    allowedHeaders: '*',
+    origin: '*',
+    credentials: true,
+  });
+
+  await app.listen(process.env.PORT || 3069);
 }
 bootstrap();

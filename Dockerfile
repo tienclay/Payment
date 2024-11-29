@@ -1,23 +1,31 @@
-# src/Dockerfile (Project B)
+FROM node:lts as builder
 
-FROM node:18-alpine
+# Create app directory
+WORKDIR /usr/src/app
 
-WORKDIR /app
-
-# Copy package.json và yarn.lock để cài đặt dependencies
+# Install app dependencies
 COPY package.json yarn.lock ./
 
-# Cài đặt dependencies chỉ cần thiết cho production
-RUN yarn install --production
+RUN yarn install --frozen-lockfile
 
-# Copy toàn bộ mã nguồn vào container
 COPY . .
 
-# Build ứng dụng NestJS
 RUN yarn build
 
-# Expose port 3001
-EXPOSE 3001
+FROM node:lts-slim
 
-# Chạy ứng dụng ở chế độ production
-CMD ["yarn", "start:prod"]
+ENV NODE_ENV production
+USER node
+
+# Create app directory
+WORKDIR /usr/src/app
+
+# Install app dependencies
+COPY package.json yarn.lock ./
+
+RUN yarn install --production --frozen-lockfile
+
+COPY --from=builder /usr/src/app/dist ./dist
+
+
+CMD [ "node", "dist/main.js" ]

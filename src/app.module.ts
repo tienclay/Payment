@@ -9,8 +9,4 @@ import { ApiKeyMiddleware } from './middleware/api-key.middleware';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-  // configure(consumer: MiddlewareConsumer) {
-  //   consumer.apply(ApiKeyMiddleware).forRoutes('*');
-  // }
-}
+export class AppModule {}

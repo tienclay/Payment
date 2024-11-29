@@ -37,9 +37,7 @@ export class PaymentService {
     };
 
     try {
-      console.log('1 :>> ', 1);
       const paymentLinkRes = await this.payOS.createPaymentLink(body);
-
       return {
         bin: paymentLinkRes.bin,
         checkoutUrl: paymentLinkRes.checkoutUrl,
@@ -130,7 +128,6 @@ export class PaymentService {
   async confirmWebhook(confirmWebhookDto: ConfirmWebhookDto): Promise<null> {
     const { webhookUrl } = confirmWebhookDto;
     try {
-      console.log('webhookUrl :>> ', webhookUrl);
       await this.payOS.confirmWebhook(webhookUrl);
       return null;
     } catch (error) {
@@ -153,7 +150,6 @@ export class PaymentService {
   async handlePayOSWebhook(body: any): Promise<WebhookDataDto> {
     this.logger.log('Payment handler triggered');
     const webhookData = this.verifyPaymentWebhookData(body);
-    console.log('webhookData :>> ', webhookData);
     if (
       ['Ma giao dich thu nghiem', 'VQRIO123'].includes(webhookData.description)
     ) {
